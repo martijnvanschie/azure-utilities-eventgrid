@@ -40,7 +40,7 @@ jobs:
       uses: actions/upload-artifact@v3.0.0
       with:
         name: cli
-        path: ./publish/
+        path: publish/
 
   release-cli:
     name: Release the cli
