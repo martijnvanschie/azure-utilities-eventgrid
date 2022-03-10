@@ -24,12 +24,16 @@ jobs:
         dotnet restore
       
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: |
+        ls
+        cd cli
+        dotnet build --configuration Release --no-restore
       
     - name: Test
       run: dotnet test --no-build --verbosity normal
    
     - name: Publish
       run: |
+        cd cli
         cd EventGrid.Publisher.ConsoleApp
         dotnet publish -p:PublishSingleFile=$singlefile --runtime win-x64 --configuration Release --no-self-contained
