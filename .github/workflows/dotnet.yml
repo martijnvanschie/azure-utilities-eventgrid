@@ -58,7 +58,7 @@ jobs:
         filename: evgtpub-release.zip
     - uses: ncipollo/release-action@v1
       with:
-        #artifacts: cli
+        artifacts: "evgtpub-release.zip"
         name: Release v${{ github.run_number }}
         body: |
           # New release
