@@ -61,4 +61,5 @@ jobs:
         #artifacts: cli
         body: |
           # New release
+        tag: release
         token: ${{ secrets.GITHUB_TOKEN }}        
