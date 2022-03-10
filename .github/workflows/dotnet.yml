@@ -10,6 +10,11 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        #shell: bash
+        working-directory: ./cli
 
     steps:
     - uses: actions/checkout@v2
@@ -20,13 +25,10 @@ jobs:
         
     - name: Restore dependencies
       run: |
-        cd cli
         dotnet restore
       
     - name: Build
       run: |
-        ls
-        cd cli
         dotnet build --configuration Release --no-restore
       
     - name: Test
@@ -34,6 +36,5 @@ jobs:
    
     - name: Publish
       run: |
-        cd cli
         cd EventGrid.Publisher.ConsoleApp
         dotnet publish -p:PublishSingleFile=$singlefile --runtime win-x64 --configuration Release --no-self-contained
