@@ -59,7 +59,8 @@ jobs:
     - uses: ncipollo/release-action@v1
       with:
         #artifacts: cli
+        name: Release v${{ github.run_number }}
         body: |
           # New release
-        tag: release
+        tag: v${{ github.run_number }}
         token: ${{ secrets.GITHUB_TOKEN }}        
