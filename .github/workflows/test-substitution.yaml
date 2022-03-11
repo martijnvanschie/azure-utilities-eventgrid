@@ -15,9 +15,14 @@ jobs:
     - name: Check out the code
       uses: actions/checkout@v2
     - uses: QwerMike/xpath-action@v1
+      id: xpath
       with:
         filename: './cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
-        expression: '//Project/PropertyGroup/FileVersion/text()'      
+        expression: '//Project/PropertyGroup/FileVersion/text()'
+        
+    - name: branch
+      run: echo "${{ steps.xpath.outputs.result }}"
+      
     - name: xml-replace-action
       uses: rvolo/xml-replace-action@v0.3
       with:
