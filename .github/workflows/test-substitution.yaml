@@ -15,23 +15,29 @@ jobs:
     - name: Check out the code
       uses: actions/checkout@v2
     - uses: QwerMike/xpath-action@v1
-      id: xpath
+      id: AssemblyVersion
       with:
         filename: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
-        expression: '//Project/PropertyGroup/FileVersion/text()'
-        
+        expression: '//Project/PropertyGroup/AssemblyVersion/text()'
+    - uses: QwerMike/xpath-action@v1
+      id: PackageVersion
+      with:
+        filename: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+        expression: '//Project/PropertyGroup/PackageVersion/text()'        
     - name: branch
       run: |
-        echo "${{ steps.xpath.outputs.result }}"
-        echo "SHA 8 = ${GITHUB_SHA::8}"
-        echo "SHA 4 = ${GITHUB_SHA::4}"
-      
+        echo "${{ steps.AssemblyVersion.outputs.result }}"
+        echo "${{ steps.PackageVersion.outputs.result }}"
+        echo "SHA 8 = ${GITHUB_SHA::8}"      
     - name: xml-replace-action
       uses: rvolo/xml-replace-action@v0.3
       with:
-        # path in filesystem to xml file
         filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
-        # Xpath to use when getting nodes
         xpath: '//Project/PropertyGroup/FileVersion/text()'
-        # value to replace with
-        replace: "2.0.0-beta"
+        replace: "${{ steps.AssemblyVersion.outputs.result }}.${{ github.run_number }}"
+    - name: xml-replace-action
+      uses: rvolo/xml-replace-action@v0.3
+      with:
+        filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+        xpath: '//Project/PropertyGroup/FileVersion/text()'
+        replace: "${{ steps.PackageVersion.outputs.result }}+${GITHUB_SHA::8}"        
