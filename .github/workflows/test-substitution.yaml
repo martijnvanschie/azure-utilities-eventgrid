@@ -21,7 +21,10 @@ jobs:
         expression: '//Project/PropertyGroup/FileVersion/text()'
         
     - name: branch
-      run: echo "${{ steps.xpath.outputs.result }}"
+      run: |
+        echo "${{ steps.xpath.outputs.result }}"
+        echo "SHA 8 = ${GITHUB_SHA::8}"
+        echo "SHA 4 = ${GITHUB_SHA::4}"
       
     - name: xml-replace-action
       uses: rvolo/xml-replace-action@v0.3
