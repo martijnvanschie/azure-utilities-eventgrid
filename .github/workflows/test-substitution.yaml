@@ -22,4 +22,4 @@ jobs:
         # Xpath to use when getting nodes
         xpath: "//Project/PropertyGroup/FileVersion/text()"
         # value to replace with
-        replace: 2.0.0-beta
+        replace: "2.0.0-beta"
