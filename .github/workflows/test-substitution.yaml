@@ -17,7 +17,7 @@ jobs:
     - uses: QwerMike/xpath-action@v1
       id: xpath
       with:
-        filename: './cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+        filename: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
         expression: '//Project/PropertyGroup/FileVersion/text()'
         
     - name: branch
@@ -27,7 +27,7 @@ jobs:
       uses: rvolo/xml-replace-action@v0.3
       with:
         # path in filesystem to xml file
-        filepath: './cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+        filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
         # Xpath to use when getting nodes
         xpath: '/Project/PropertyGroup/FileVersion/text()'
         # value to replace with
