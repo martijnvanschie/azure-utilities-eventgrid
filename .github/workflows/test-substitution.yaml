@@ -34,10 +34,10 @@ jobs:
       with:
         filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
         xpath: '//Project/PropertyGroup/FileVersion/text()'
-        replace: "${{ steps.AssemblyVersion.outputs.result }}.${{ github.run_number }}"
+        replace: '${{ steps.AssemblyVersion.outputs.result }}.${{ github.run_number }}'
     - name: xml-replace-action
       uses: rvolo/xml-replace-action@v0.3
       with:
         filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
         xpath: '//Project/PropertyGroup/FileVersion/text()'
-        replace: "${{ steps.PackageVersion.outputs.result }}+${GITHUB_SHA::8}"        
+        replace: '${{ steps.PackageVersion.outputs.result }}+${{GITHUB_SHA::8}}'        
