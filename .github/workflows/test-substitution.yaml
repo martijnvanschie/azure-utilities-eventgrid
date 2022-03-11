@@ -14,12 +14,16 @@ jobs:
     steps:
     - name: Check out the code
       uses: actions/checkout@v2
+    - uses: QwerMike/xpath-action@v1
+      with:
+        filename: './cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+        expression: '//Project/PropertyGroup/FileVersion/text()'      
     - name: xml-replace-action
       uses: rvolo/xml-replace-action@v0.3
       with:
         # path in filesystem to xml file
-        filepath: "./cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj"
+        filepath: './cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
         # Xpath to use when getting nodes
-        xpath: "//Project/PropertyGroup/FileVersion/text()"
+        xpath: '//Project/PropertyGroup/FileVersion/text()'
         # value to replace with
         replace: "2.0.0-beta"
