@@ -35,9 +35,15 @@ jobs:
         filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
         xpath: '//Project/PropertyGroup/FileVersion/text()'
         replace: '${{ steps.AssemblyVersion.outputs.result }}.${{ github.run_number }}'
+    - uses: web3j/substr-action@v1.2
+      id: hash
+      with:
+        value: ${{github.sha}}
+        start: '0'
+        length: '8'
     - name: xml-replace-action
       uses: rvolo/xml-replace-action@v0.3
       with:
         filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
         xpath: '//Project/PropertyGroup/FileVersion/text()'
-        replace: '${{ steps.PackageVersion.outputs.result }}+${{github.sha}}'
+        replace: '${{ steps.PackageVersion.outputs.result }}+${{steps.hash.outputs.result}}'
