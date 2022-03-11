@@ -8,7 +8,7 @@ var version = typeof(Program).Assembly.GetName().Version;
 Console.WriteLine($"{AppContext.BaseDirectory}");
 
 var path = Path.Combine(AppContext.BaseDirectory, "evgtpub.exe");
-var fileversion = FileVersionInfo.GetVersionInfo(path).FileVersion;
+var fileversion = FileVersionInfo.GetVersionInfo(path).ProductVersion;
 AnsiConsole.MarkupLine($"Event Grid Publisher - [lightgoldenrod2_1]{fileversion}[/]");
 AnsiConsole.MarkupLine($"Part of the [cyan1]Azure Utilities Collection[/]");
 

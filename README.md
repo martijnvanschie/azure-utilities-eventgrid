@@ -29,3 +29,20 @@ As the event id is a required field it should be in the file or the serilization
 ## Enjoy
 
 Just enjoy this really simple cli and use it well :)
+
+## Resources
+
+### Versioning
+
+This project follow the below versioning guidelines.
+
+| Version              | Format                                    | Description |
+| -------------------- | ----------------------------------------- | ----------- |
+| AssemblyVersion      | `major.minor.0.0`                         | Scoped to only major and minor version changes. Indicates backward compatibility. |
+| FileVersion          | `major.minor.patch.build`                 | Includes a patch and build numer, indicating the exact version of the application. |
+| InformationalVersion | `major.minor.patch-pre-release`           | Includes a pre-release identifier. This is the informational version used to communicate. |
+| PackageVersion       | `major.minor.patch-pre-release+commit-id` | Includes the commit id. This is the most specific version and has a direct reference to the github commit. |
+
+[Versioning and .NET Libraries](https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/versioning)
+
+[Semantic Versioning 2.0.0](https://semver.org/)
