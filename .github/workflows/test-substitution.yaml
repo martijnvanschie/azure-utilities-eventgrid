@@ -14,10 +14,12 @@ jobs:
     steps:
     - name: Check out the code
       uses: actions/checkout@v2
-    - name: Variable Substitution
-      uses: microsoft/variable-substitution@v1
+    - name: xml-replace-action
+      uses: rvolo/xml-replace-action@v0.3
       with:
-        # comma separated list of XML/JSON/YAML files in which tokens are to be substituted. Files names must be specified relative to the folder-path.
-        files: "./cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj"
-      env:
-        Project.PropertyGroup.FileVersion: 2.0.0-beta
+        # path in filesystem to xml file
+        filepath: "./cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj"
+        # Xpath to use when getting nodes
+        xpath: "//Project/PropertyGroup/FileVersion/text()"
+        # value to replace with
+        replace: 2.0.0-beta
