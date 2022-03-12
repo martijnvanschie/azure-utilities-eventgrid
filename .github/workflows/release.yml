@@ -1,17 +1,16 @@
-name: Create release
+name: Create release based on tag
 
 on:
   push:
     tags:
-      - '*'
-    branches: [ main ]
+      - v1.*
 
   workflow_dispatch:
 
 jobs:
 
-  test_getting_tags:
-    name: Testing tags actions
+  extract_tag_and_create_release:
+    name: Extract tag and create release
     runs-on: ubuntu-latest
 
     steps:

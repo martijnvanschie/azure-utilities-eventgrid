@@ -11,7 +11,7 @@ env:
 
 jobs:
   continues_integration:
-    name: Run continues integration for ${{ github.event_name }}
+    name: Run continues integration for ${{ github.event_name }} event
     runs-on: ubuntu-latest
     
     defaults:
