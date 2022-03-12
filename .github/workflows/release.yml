@@ -1,22 +1,22 @@
 name: Create release
 
 on:
-  create:
-    tags: [v*]
+  push:
+    tags:
+      - '*'
     branches: [ main ]
+
   workflow_dispatch:
 
 jobs:
 
-  my_job:
+  test_getting_tags:
+    name: Testing tags actions
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    # Optionally: unshallow as a separate operation
-    # - name: Unshallow
-    #   run: git fetch --prune --unshallow
     - name: Find Tag
       id: tagger
       uses: jimschubert/query-tag-action@v1
@@ -24,9 +24,15 @@ jobs:
         include: 'v*'
         exclude: '*-rc*'
         commit-ish: 'HEAD~'
-        # if you unshallow in a separate step, use the following option:
-        # skip-unshallow: 'true'
     - name: Show Tag
       id: display
       run: |
         echo 'Output from Find Tag: ${{steps.tagger.outputs.tag}}'
+    - name: Get tag
+      id: tag
+      uses: dawidd6/action-get-tag@v1
+      with:
+        # Optionally strip `v` prefix
+        strip_v: true
+    - name: Use tag
+      run: echo ${{steps.tag.outputs.tag}}        
