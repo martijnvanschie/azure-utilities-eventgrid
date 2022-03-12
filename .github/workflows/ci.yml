@@ -10,8 +10,8 @@ env:
   SINGLE_FILE: "true"
 
 jobs:
-  build:
-    name: Build and upload artifact
+  continues_integration:
+    name: Run continues integration for ${{ github.event_name }}
     runs-on: ubuntu-latest
     
     defaults:
