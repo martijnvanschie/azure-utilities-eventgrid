@@ -1,3 +1,8 @@
+### Run the following command to enable execution of unsigned scripts in current sessions.
+### Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
+###
+
+
 $publishingfolder = "c:\apps\Azure utils"
 $singlefile = "true"
 
