@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <!-- NoTargets SDK no longer sets Language, which is required by NerdBank.GitVersioning -->
+    <Language>C#</Language>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Tools.InnoSetup" Version="6.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <IssFile Include="evgtpub.iss" />
+  </ItemGroup>
+
+  <Target Name="RunTool" AfterTargets="Build" DependsOnTargets="GetBuildVersion">
+    <Exec Command="$(InnoSetupCompiler) %(IssFile.FullPath) /O$(OutDir) /DMyAppVersion=$(BuildVersion)" />
+  </Target>
+</Project>
