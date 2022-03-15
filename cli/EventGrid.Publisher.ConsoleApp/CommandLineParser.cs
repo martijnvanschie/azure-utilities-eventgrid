@@ -14,7 +14,7 @@ namespace EventGrid.Publisher.ConsoleApp
         public CommandLineParser()
         {
             Command = new RootCommand();
-            Command.Description = "Event Grid Publisher v0.1.0";
+            Command.Description = "Azure Event Grid Publisher";
 
             AddOptions();
         }
