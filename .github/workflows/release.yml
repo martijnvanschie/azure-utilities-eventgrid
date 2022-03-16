@@ -1,37 +1,107 @@
 name: Create release based on tag
 
 on:
-  push:
-    tags:
-      - v1.*
-
   workflow_dispatch:
 
 jobs:
 
-  extract_tag_and_create_release:
+  create_release_version:
     name: Extract tag and create release
     runs-on: ubuntu-latest
 
+    outputs:
+      buildnumber: ${{ steps.buildnumber.outputs.buildnumber }}
+
+    env:
+      VERBOSE: 'true'
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Find Tag
-      id: tagger
-      uses: jimschubert/query-tag-action@v1
-      with:
-        include: 'v*'
-        exclude: '*-rc*'
-        commit-ish: 'HEAD~'
-    - name: Show Tag
-      id: display
-      run: |
-        echo 'Output from Find Tag: ${{steps.tagger.outputs.tag}}'
-    - name: Get tag
-      id: tag
-      uses: dawidd6/action-get-tag@v1
-      with:
-        # Optionally strip `v` prefix
-        strip_v: true
-    - name: Use tag
-      run: echo ${{steps.tag.outputs.tag}}        
+      - name: Checkout the source code
+        uses: actions/checkout@v2
+
+      - name: Retreive latest tag
+        id: querytag
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: 'v*'
+          exclude: '*-rc*'
+          commit-ish: 'HEAD'
+
+      - name: Get version from tag
+        id: dotnet-versions
+        uses: martijnvanschie/github-actions/get-dotnet-versions@v1.0.0-rc.1
+        with: 
+          version: ${{ steps.querytag.outputs.tag }}
+
+      - name: Echo all version outputs
+        run: |
+          echo version-assembly = ${{ steps.dotnet-versions.outputs.version-assembly }} 
+          echo version-file = ${{ steps.dotnet-versions.outputs.version-file }}
+          echo version-informational = ${{ steps.dotnet-versions.outputs.version-informational }}
+          echo version-package = ${{ steps.dotnet-versions.outputs.version-package }}
+          echo buildnumber = ${{ steps.dotnet-versions.outputs.buildnumber }}
+
+      - name: xml-replace-action
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/FileVersion/text()'
+          replace: '${{ steps.dotnet-versions.output.version-build }}'
+
+  build_artifacts:
+    needs: create_release_version
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore
+
+      - name: This is where we apply the versions to the csproj file
+        run: |
+          echo version-assembly = ${{ sneeds.create_release_version.outputs.version-assembly }} 
+          echo version-file = ${{ needs.create_release_version.outputs.version-file }}
+          echo version-informational = ${{ needs.create_release_version.outputs.version-informational }}
+          echo version-package = ${{ needs.create_release_version.outputs.version-package }}
+          echo buildnumber = ${{ needs.create_release_version.outputs.buildnumber }}          
+
+      - name: Build
+        run: |
+          dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+
+      - name: Publish
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          cd EventGrid.Publisher.ConsoleApp
+          dotnet publish -p:PublishSingleFile=$SINGLE_FILE --runtime win-x64 --configuration Release --no-self-contained --output ../../publish/
+
+      - name: Upload a Build Artifact
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: cli
+          path: publish/        
+
+      - name: Echo all kind of info :)
+        run: |
+          echo "${{ needs.create_release_version.outputs.buildnumber }}"
+
+  release:
+    needs: build_artifacts
+    runs-on: ubuntu-latest
+    
+    steps:         
+      - name: Echo all kind of info :)
+        run: |
+          echo "${{ needs.create_release_version.outputs.buildnumber }}"          
