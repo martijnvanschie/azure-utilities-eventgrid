@@ -64,7 +64,7 @@ jobs:
 
       - name: This is where we apply the versions to the csproj file
         run: |
-          echo version-assembly = ${{ needs.create_release_version.outputs.version-assembly }} 
+          echo version-assembly = ${{ jobs.create_release_version.steps.dotnet-versions.outputs.version-assembly }} 
           echo version-file = ${{ needs.create_release_version.outputs.version-file }}
           echo version-informational = ${{ needs.create_release_version.outputs.version-informational }}
           echo version-package = ${{ needs.create_release_version.outputs.version-package }}
