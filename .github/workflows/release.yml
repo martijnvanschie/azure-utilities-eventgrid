@@ -41,16 +41,13 @@ jobs:
           echo version-package = ${{ steps.dotnet-versions.outputs.version-package }}
           echo buildnumber = ${{ steps.dotnet-versions.outputs.buildnumber }}
 
-      - name: xml-replace-action
-        uses: rvolo/xml-replace-action@v0.3
-        with:
-          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
-          xpath: '//Project/PropertyGroup/FileVersion/text()'
-          replace: '${{ steps.dotnet-versions.output.version-build }}'
-
   build_artifacts:
     needs: create_release_version
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./cli
     
     steps:
       - name: Checkout the source code
@@ -71,7 +68,14 @@ jobs:
           echo version-file = ${{ needs.create_release_version.outputs.version-file }}
           echo version-informational = ${{ needs.create_release_version.outputs.version-informational }}
           echo version-package = ${{ needs.create_release_version.outputs.version-package }}
-          echo buildnumber = ${{ needs.create_release_version.outputs.buildnumber }}          
+          echo buildnumber = ${{ needs.create_release_version.outputs.buildnumber }} 
+
+      - name: xml-replace-action
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/FileVersion/text()'
+          replace: '${{ needs.create_release_version.outputs.version-file }}' 
 
       - name: Build
         run: |
@@ -91,11 +95,7 @@ jobs:
         uses: actions/upload-artifact@v3.0.0
         with:
           name: cli
-          path: publish/        
-
-      - name: Echo all kind of info :)
-        run: |
-          echo "${{ needs.create_release_version.outputs.buildnumber }}"
+          path: publish/
 
   release:
     needs: build_artifacts
