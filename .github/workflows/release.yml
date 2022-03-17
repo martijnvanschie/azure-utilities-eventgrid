@@ -10,7 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      buildnumber: ${{ steps.buildnumber.outputs.buildnumber }}
+      version-assembly: ${{ steps.output-params.outputs.version-assembly }}
+      version-file: ${{ steps.output-params.outputs.version-file }}
+      version-informational: ${{ steps.output-params.outputs.version-informational }}
+      version-package: ${{ steps.output-params.outputs.version-package }}
+      buildnumber: ${{ steps.output-params.outputs.buildnumber }}
 
     env:
       VERBOSE: 'true'
@@ -41,6 +45,16 @@ jobs:
           echo version-package = ${{ steps.dotnet-versions.outputs.version-package }}
           echo buildnumber = ${{ steps.dotnet-versions.outputs.buildnumber }}
 
+      - name: Set output parameters
+        id: output-params
+        shell: bash
+        run: |
+          echo "::set-output name=version-assembly::${{ steps.dotnet-versions.outputs.version-assembly }}"
+          echo "::set-output name=version-file::${{ steps.dotnet-versions.outputs.version-file }}"
+          echo "::set-output name=version-informational::${{ steps.dotnet-versions.outputs.version-informational }}"
+          echo "::set-output name=version-package::${{ steps.dotnet-versions.outputs.version-package }}"
+          echo "::set-output name=buildnumber::${{ steps.dotnet-versions.outputs.buildnumber }}"            
+
   build_artifacts:
     needs: create_release_version
     runs-on: ubuntu-latest
@@ -69,13 +83,6 @@ jobs:
           echo version-informational = ${{ needs.create_release_version.outputs.version-informational }}
           echo version-package = ${{ needs.create_release_version.outputs.version-package }}
           echo buildnumber = ${{ needs.create_release_version.outputs.buildnumber }} 
-
-      - name: xml-replace-action
-        uses: rvolo/xml-replace-action@v0.3
-        with:
-          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
-          xpath: '//Project/PropertyGroup/FileVersion/text()'
-          replace: '${{ needs.create_release_version.outputs.version-file }}' 
 
       - name: Build
         run: |
