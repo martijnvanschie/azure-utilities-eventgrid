@@ -20,10 +20,7 @@ jobs:
       VERBOSE: 'true'
 
     steps:
-      - name: Checkout the source code
-        uses: actions/checkout@v2
-
-      - name: Retreive latest tag
+      - name: Query for latest tag
         id: querytag
         uses: jimschubert/query-tag-action@v1
         with:
@@ -37,14 +34,6 @@ jobs:
         with: 
           version: ${{ steps.querytag.outputs.tag }}
 
-      - name: Echo all version outputs
-        run: |
-          echo version-assembly = ${{ steps.dotnet-versions.outputs.version-assembly }} 
-          echo version-file = ${{ steps.dotnet-versions.outputs.version-file }}
-          echo version-informational = ${{ steps.dotnet-versions.outputs.version-informational }}
-          echo version-package = ${{ steps.dotnet-versions.outputs.version-package }}
-          echo buildnumber = ${{ steps.dotnet-versions.outputs.buildnumber }}
-
       - name: Set output parameters
         id: output-params
         shell: bash
@@ -56,6 +45,7 @@ jobs:
           echo "::set-output name=buildnumber::${{ steps.dotnet-versions.outputs.buildnumber }}"            
 
   build_artifacts:
+    name: Build and publish artifacts
     needs: create_release_version
     runs-on: ubuntu-latest
 
@@ -78,11 +68,39 @@ jobs:
 
       - name: This is where we apply the versions to the csproj file
         run: |
-          echo version-assembly = ${{ needs.create_release_version.steps.dotnet-versions.outputs.version-assembly }} 
+          echo version-assembly = ${{ needs.create_release_version.outputs.version-assembly }} 
           echo version-file = ${{ needs.create_release_version.outputs.version-file }}
           echo version-informational = ${{ needs.create_release_version.outputs.version-informational }}
           echo version-package = ${{ needs.create_release_version.outputs.version-package }}
           echo buildnumber = ${{ needs.create_release_version.outputs.buildnumber }} 
+
+      - name: xml-replace-action AssemblyVersion
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/AssemblyVersion/text()'
+          replace: '${{ needs.create_release_version.outputs.version-assembly }}' 
+
+      - name: xml-replace-action FileVersion
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/FileVersion/text()'
+          replace: '${{ needs.create_release_version.outputs.version-file }}' 
+
+      - name: xml-replace-action InformationalVersion
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/InformationalVersion/text()'
+          replace: '${{ needs.create_release_version.outputs.version-informational }}' 
+
+      - name: xml-replace-action PackageVersion
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/PackageVersion/text()'
+          replace: '${{ needs.create_release_version.outputs.version-package }}'                                         
 
       - name: Build
         run: |
