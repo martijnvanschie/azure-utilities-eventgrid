@@ -112,7 +112,7 @@ jobs:
       - name: Test
         run: | 
           dotnet test --no-build --verbosity normal
-          .\EventGrid.Publisher.ConsoleApp\bin\Debug\net6.0\evgtpub.exe -h
+          ./EventGrid.Publisher.ConsoleApp/bin/Debug/net6.0/evgtpub.exe -h
 
       - name: Publish
         if: ${{ github.event_name != 'pull_request' }}
