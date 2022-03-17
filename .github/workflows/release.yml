@@ -112,7 +112,6 @@ jobs:
       - name: Test
         run: | 
           dotnet test --no-build --verbosity normal
-          ./EventGrid.Publisher.ConsoleApp/bin/Debug/net6.0/evgtpub.exe -h
 
       - name: Publish
         if: ${{ github.event_name != 'pull_request' }}
@@ -127,11 +126,27 @@ jobs:
           name: cli
           path: publish/
 
-  release:
-    needs: build_artifacts
+  release-cli:
+    name: Release the cli
     runs-on: ubuntu-latest
+    needs: [build_artifacts]
     
-    steps:         
-      - name: Echo all kind of info :)
-        run: |
-          echo "${{ needs.create_release_version.outputs.buildnumber }}"          
+    steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v3.0.0
+      with:
+        name: cli
+
+    - name: Zip Release
+      uses: TheDoctor0/zip-release@0.6.1
+      with:
+        filename: evgtpub-release-win-x64${{ needs.create_release_version.outputs.version-file }}.zip
+
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "evgtpub-release-win-x64${{ needs.create_release_version.outputs.version-file }}.zip"
+        name: Release v${{ needs.create_release_version.outputs.version-file }}
+        body: |
+          # New release
+        tag: v${{ needs.create_release_version.outputs.version-file }}
+        token: ${{ secrets.GITHUB_TOKEN }}         
