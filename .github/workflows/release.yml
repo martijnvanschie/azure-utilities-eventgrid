@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Checkout the source code
         uses: actions/checkout@v2
-            
+
       - name: Query for latest tag
         id: querytag
         uses: jimschubert/query-tag-action@v1
@@ -110,7 +110,9 @@ jobs:
           dotnet build --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: | 
+          dotnet test --no-build --verbosity normal
+          .\EventGrid.Publisher.ConsoleApp\bin\Debug\net6.0\evgtpub.exe -h
 
       - name: Publish
         if: ${{ github.event_name != 'pull_request' }}
