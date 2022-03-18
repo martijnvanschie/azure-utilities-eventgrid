@@ -119,12 +119,20 @@ jobs:
         run: | 
           dotnet test --no-build --verbosity normal
 
+      # PublishSingleFile
+      - name: Set PublishSingleFile to true
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/PublishSingleFile/text()'
+          replace: 'true'       
+
       - name: Publish
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           cd EventGrid.Publisher.ConsoleApp
           cat './EventGrid.Publisher.ConsoleApp.csproj'
-          dotnet publish -p:PublishSingleFile=$SINGLE_FILE --runtime win-x64 --configuration Release --no-self-contained --output ../../publish/
+          dotnet publish --runtime win-x64 --configuration Release --no-self-contained --output ../../publish/
           cat './EventGrid.Publisher.ConsoleApp.csproj'
 
       - name: Upload a Build Artifact
