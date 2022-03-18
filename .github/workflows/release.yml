@@ -123,9 +123,9 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           cd EventGrid.Publisher.ConsoleApp
-          cat './EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          cat './EventGrid.Publisher.ConsoleApp.csproj'
           dotnet publish -p:PublishSingleFile=$SINGLE_FILE --runtime win-x64 --configuration Release --no-self-contained --output ../../publish/
-          cat './EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          cat './EventGrid.Publisher.ConsoleApp.csproj'
 
       - name: Upload a Build Artifact
         if: ${{ github.event_name != 'pull_request' }}
