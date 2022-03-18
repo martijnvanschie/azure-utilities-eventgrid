@@ -150,6 +150,9 @@ jobs:
         artifacts: "evgtpub-release-win-x64${{ needs.create_release_version.outputs.version-package }}.zip"
         name: Release v${{ needs.create_release_version.outputs.version-package }}
         body: |
-          # New release
+          # Release notes
+          
+          v${{ needs.create_release_version.outputs.version-package }} of Event Grid Utilities
         tag: v${{ needs.create_release_version.outputs.version-package }}
-        token: ${{ secrets.GITHUB_TOKEN }}         
+        allowUpdates: true
+        token: ${{ secrets.GITHUB_TOKEN }}
