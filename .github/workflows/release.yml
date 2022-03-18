@@ -109,7 +109,7 @@ jobs:
           replace: '${{ needs.create_release_version.outputs.version-package }}'  
 
       - name: Print project file
-        run: cat 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+        run: cat './EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
 
       - name: Build
         run: |
