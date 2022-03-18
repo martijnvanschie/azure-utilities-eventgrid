@@ -123,7 +123,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           cd EventGrid.Publisher.ConsoleApp
-          dotnet publish -p:PublishSingleFile=$SINGLE_FILE --runtime win-x64 --configuration Release --no-self-contained --output ../../publish/
+          dotnet publish -p:PublishSingleFile=$SINGLE_FILE --no-restore --runtime win-x64 --configuration Release --no-self-contained --output ../../publish/
 
       - name: Upload a Build Artifact
         if: ${{ github.event_name != 'pull_request' }}
@@ -146,11 +146,11 @@ jobs:
     - name: Zip Release
       uses: TheDoctor0/zip-release@0.6.1
       with:
-        filename: evgtpub-release-win-x64${{ needs.create_release_version.outputs.version-package }}.zip
+        filename: evgtpub-release-win-x64-${{ needs.create_release_version.outputs.version-package }}.zip
 
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "evgtpub-release-win-x64${{ needs.create_release_version.outputs.version-package }}.zip"
+        artifacts: "evgtpub-release-win-x64-${{ needs.create_release_version.outputs.version-package }}.zip"
         name: Release v${{ needs.create_release_version.outputs.version-package }}
         body: |
           # Release notes
