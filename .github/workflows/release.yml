@@ -10,7 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      buildnumber: ${{ steps.buildnumber.outputs.buildnumber }}
+      version-assembly: ${{ steps.output-params.outputs.version-assembly }}
+      version-file: ${{ steps.output-params.outputs.version-file }}
+      version-informational: ${{ steps.output-params.outputs.version-informational }}
+      version-package: ${{ steps.output-params.outputs.version-package }}
+      buildnumber: ${{ steps.output-params.outputs.buildnumber }}
 
     env:
       VERBOSE: 'true'
@@ -19,7 +23,7 @@ jobs:
       - name: Checkout the source code
         uses: actions/checkout@v2
 
-      - name: Retreive latest tag
+      - name: Query for latest tag
         id: querytag
         uses: jimschubert/query-tag-action@v1
         with:
@@ -33,17 +37,23 @@ jobs:
         with: 
           version: ${{ steps.querytag.outputs.tag }}
 
-      - name: Echo all version outputs
+      - name: Set output parameters
+        id: output-params
+        shell: bash
         run: |
-          echo version-assembly = ${{ steps.dotnet-versions.outputs.version-assembly }} 
-          echo version-file = ${{ steps.dotnet-versions.outputs.version-file }}
-          echo version-informational = ${{ steps.dotnet-versions.outputs.version-informational }}
-          echo version-package = ${{ steps.dotnet-versions.outputs.version-package }}
-          echo buildnumber = ${{ steps.dotnet-versions.outputs.buildnumber }}
+          echo "::set-output name=version-assembly::${{ steps.dotnet-versions.outputs.version-assembly }}"
+          echo "::set-output name=version-file::${{ steps.dotnet-versions.outputs.version-file }}"
+          echo "::set-output name=version-informational::${{ steps.dotnet-versions.outputs.version-informational }}"
+          echo "::set-output name=version-package::${{ steps.dotnet-versions.outputs.version-package }}"
+          echo "::set-output name=buildnumber::${{ steps.dotnet-versions.outputs.buildnumber }}"            
 
   build_artifacts:
+    name: Build and publish artifacts
     needs: create_release_version
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+
+    env:
+      SINGLE_FILE: "true"
 
     defaults:
       run:
@@ -64,31 +74,66 @@ jobs:
 
       - name: This is where we apply the versions to the csproj file
         run: |
-          echo version-assembly = ${{ needs.create_release_version.steps.dotnet-versions.outputs.version-assembly }} 
+          echo version-assembly = ${{ needs.create_release_version.outputs.version-assembly }} 
           echo version-file = ${{ needs.create_release_version.outputs.version-file }}
           echo version-informational = ${{ needs.create_release_version.outputs.version-informational }}
           echo version-package = ${{ needs.create_release_version.outputs.version-package }}
           echo buildnumber = ${{ needs.create_release_version.outputs.buildnumber }} 
 
-      - name: xml-replace-action
+      - name: xml-replace-action AssemblyVersion
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/AssemblyVersion/text()'
+          replace: '${{ needs.create_release_version.outputs.version-assembly }}' 
+
+      - name: xml-replace-action FileVersion
         uses: rvolo/xml-replace-action@v0.3
         with:
           filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
           xpath: '//Project/PropertyGroup/FileVersion/text()'
           replace: '${{ needs.create_release_version.outputs.version-file }}' 
 
+      - name: xml-replace-action InformationalVersion
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/InformationalVersion/text()'
+          replace: '${{ needs.create_release_version.outputs.version-informational }}' 
+
+      - name: xml-replace-action PackageVersion
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/PackageVersion/text()'
+          replace: '${{ needs.create_release_version.outputs.version-package }}'  
+
+      - name: Print project file
+        run: cat './EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+
       - name: Build
         run: |
           dotnet build --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: | 
+          dotnet test --no-build --verbosity normal
+
+      # PublishSingleFile
+      - name: Set PublishSingleFile to true
+        uses: rvolo/xml-replace-action@v0.3
+        with:
+          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          xpath: '//Project/PropertyGroup/PublishSingleFile/text()'
+          replace: 'true'       
 
       - name: Publish
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           cd EventGrid.Publisher.ConsoleApp
-          dotnet publish -p:PublishSingleFile=$SINGLE_FILE --runtime win-x64 --configuration Release --no-self-contained --output ../../publish/
+          cat './EventGrid.Publisher.ConsoleApp.csproj'
+          dotnet publish --runtime win-x64 --configuration Release --no-self-contained --output ../../publish/
+          cat './EventGrid.Publisher.ConsoleApp.csproj'
 
       - name: Upload a Build Artifact
         if: ${{ github.event_name != 'pull_request' }}
@@ -97,11 +142,30 @@ jobs:
           name: cli
           path: publish/
 
-  release:
-    needs: build_artifacts
+  release-cli:
+    name: Release the cli
     runs-on: ubuntu-latest
+    needs: [create_release_version, build_artifacts]
     
-    steps:         
-      - name: Echo all kind of info :)
-        run: |
-          echo "${{ needs.create_release_version.outputs.buildnumber }}"          
+    steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v3.0.0
+      with:
+        name: cli
+
+    - name: Zip Release
+      uses: TheDoctor0/zip-release@0.6.1
+      with:
+        filename: evgtpub-release-win-x64-${{ needs.create_release_version.outputs.version-package }}.zip
+
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "evgtpub-release-win-x64-${{ needs.create_release_version.outputs.version-package }}.zip"
+        name: Release v${{ needs.create_release_version.outputs.version-package }}
+        body: |
+          # Release notes
+          
+          v${{ needs.create_release_version.outputs.version-package }} of Event Grid Utilities
+        tag: v${{ needs.create_release_version.outputs.version-package }}
+        allowUpdates: true
+        token: ${{ secrets.GITHUB_TOKEN }}
