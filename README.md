@@ -14,17 +14,29 @@ Run the following command from the command line to get the cli usage information
 
 `evgtpub -h`
 
+### Send a single file to the event grid
+
 Example command that takes the default file (`event.json`) from the working directory
 
-`evgtpub --topic evgt-demo --accesskey "sometoken"`
+`evgtpub send file --topic evgt-demo --accesskey "sometoken"`
 
 You can specify a different file using the `--filename` option.
 
-`evgtpub --topic evgt-demo --accesskey "sometoken" --filename "someevent.json"`
+`evgtpub send file --topic evgt-demo --accesskey "sometoken" --filename "someevent.json"`
 
 As the event id is a required field it should be in the file or the serilization file fail. To prevent duplicate id's you can tell the cli to override the id with a guid prior to sending it to the event grid. Use the `` option to enforce a new id.
 
-`evgtpub --topic evgt-demo --accesskey "sometoken" --override-eventid true`
+`evgtpub send file --topic evgt-demo --accesskey "sometoken" --override-eventid true`
+
+### Send files from a folder to the event grid
+
+Example command that takes the default file (`events`) folder in the working directory
+
+`evgtpub send folder --topic evgt-demo --accesskey "sometoken"`
+
+You can specify a different folder using the `--folder` option.
+
+`evgtpub send folder --topic evgt-demo --accesskey "sometoken" --folder "messages"`
 
 ## Enjoy
 
