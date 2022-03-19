@@ -39,10 +39,9 @@ namespace EventGrid.Publisher.ConsoleApp.Commands
             {
                 AnsiConsole.MarkupLine($"Publishing event to topic [cyan1]{topic}[/].");
                 AnsiConsole.MarkupLine($"Reading file [cyan1]{filename}[/].");
-                var binary = FileReader.ReadFile(filename);
-                string? id = overrideId ? Guid.NewGuid().ToString() : null;
-                EventPublisher publisher = new EventPublisher(topic, region, accesskey);
-                await publisher.PublishBinaryDataAsync(binary, id);
+
+                var file = new FileInfo(filename);    
+                await EventSender.SendFileToEventGridAsync(file, topic, accesskey, region, overrideId);
 
             }, topicName, region, accessKey, filename, overrideEventId);
         }

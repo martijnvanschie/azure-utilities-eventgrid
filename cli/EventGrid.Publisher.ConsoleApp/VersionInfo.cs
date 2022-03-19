@@ -18,7 +18,9 @@ namespace EventGrid.Publisher.ConsoleApp
             var path = Path.Combine(AppContext.BaseDirectory, "evgtpub.exe");
             var fv = FileVersionInfo.GetVersionInfo(path); //.ProductVersion;
 
-            AnsiConsole.MarkupLine($"Event Grid Publisher - [lightgoldenrod2_1]{fv.FileMajorPart}.{fv.FileMinorPart}.{fv.FileBuildPart}[/] - Part of the [cyan1]Azure Utilities Collection[/]");
+            AnsiConsole.MarkupLine("");
+            AnsiConsole.MarkupLine($"Event Grid Publisher - [lightgoldenrod2_1]{fv.FileMajorPart}.{fv.FileMinorPart}.{fv.FileBuildPart}[/]");
+            AnsiConsole.MarkupLine($"Part of the [cyan1]Azure Utilities Collection[/]");
             AnsiConsole.MarkupLine($"[dim]Build info - {fv.ProductVersion}[/]");
         }
     }

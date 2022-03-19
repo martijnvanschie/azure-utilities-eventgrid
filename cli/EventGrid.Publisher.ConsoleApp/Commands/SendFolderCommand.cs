@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace EventGrid.Publisher.ConsoleApp.Commands
 {
-
     internal class SendFolderCommand : Command
     {
         internal SendFolderCommand(string? description = null) : base("folder", description)
@@ -62,28 +61,7 @@ namespace EventGrid.Publisher.ConsoleApp.Commands
                 var files = di.GetFiles(pattern);
                 foreach (var file in files)
                 {
-                    try
-                    {
-                        AnsiConsole.MarkupLine($"File found [cyan1]{file.FullName}[/].");
-                        var binary = FileReader.ReadFile(file.FullName);
-                        string? id = overrideId ? Guid.NewGuid().ToString() : null;
-                        EventPublisher publisher = new EventPublisher(topic, region, accesskey);
-
-                        AnsiConsole.MarkupLine($"Publishing message.");
-                        await publisher.PublishBinaryDataAsync(binary, id);
-                    }
-                    catch (ArgumentNullException ex)
-                    {
-                        AnsiConsole.MarkupLine($"[{ConsoleColors.Warning}]File [[{file.FullName}]] containts invalid event message. [[{ex.Message}]][/].");
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        AnsiConsole.MarkupLine($"[{ConsoleColors.Warning}]Unable to process file [[{file.FullName}]]. [[{ex.Message}]][/].");
-                    }
-                    finally
-                    {
-                        AnsiConsole.MarkupLine($"");
-                    }
+                    await EventSender.SendFileToEventGridAsync(file, topic, accesskey, region, overrideId);
                 }
 
             }, topicName, region, accessKey, folder, overrideEventId, pattern);

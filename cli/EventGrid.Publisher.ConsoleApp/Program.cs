@@ -2,7 +2,9 @@
 using EventGrid.Publisher.ConsoleApp;
 using Spectre.Console;
 using System.CommandLine;
+using System.Diagnostics;
 
+//Debugger.Launch();
 VersionInfo.PrintVerionInfo();
 Console.WriteLine();
 
