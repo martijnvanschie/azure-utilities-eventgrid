@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventGrid.Publisher.ConsoleApp
+namespace Reduct.Azure.EventGrid
 {
-    internal class EventPublisher
+    public class EventPublisher
     {
         EventGridPublisherClient client;
 
@@ -20,7 +20,7 @@ namespace EventGrid.Publisher.ConsoleApp
                 );
         }
 
-        internal async Task PublishBinaryDataAsync(BinaryData eventBinary, string? eventId = null)
+        public async Task PublishBinaryDataAsync(BinaryData eventBinary, string? eventId = null)
         {
             var eventData = EventGridEvent.Parse(eventBinary);
 
