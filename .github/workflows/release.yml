@@ -28,7 +28,7 @@ jobs:
         uses: jimschubert/query-tag-action@v1
         with:
           include: 'v*'
-          exclude: '*-rc*'
+          #exclude: '*-rc*'
           commit-ish: 'HEAD'
 
       - name: Get version from tag
