@@ -8,17 +8,20 @@
     <AssemblyName>evgtpub</AssemblyName>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.123</FileVersion>
-    <InformationalVersion>1.0.0-beta.1+204ff0a</InformationalVersion>
-	  <PackageVersion>1.0.0-beta.1</PackageVersion>
+    <FileVersion>1.0.1.1</FileVersion>
+    <InformationalVersion>1.0.1-beta.1+204ff0a</InformationalVersion>
+	  <PackageVersion>1.0.1-beta.1</PackageVersion>
     <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Messaging.EventGrid" Version="4.9.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />
 	<PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta3.22114.1" />
 	<PackageReference Include="Spectre.Console" Version="0.43.1-preview.0.43" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Reduct.Azure.EventGrid\Reduct.Azure.EventGrid.csproj" />
   </ItemGroup>
 
 </Project>
