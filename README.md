@@ -1,12 +1,30 @@
 # Azure Event Grid Utility
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/martijnvanschie/azure-utilities-eventgrid/Continues%20Integration?label=CI%20build)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/martijnvanschie/azure-utilities-eventgrid?label=Latest%20Release&logo=github)
+
 ## Purpose
 
 This is a small cli tool that let's you send a event grid message to a topic using a Command-Line interface. It requires a topic, access token and a file.
 
-## Prerequisites
+## Getting started
 
-The event grid cli expects the event grid to be deployed for it to work. The information of the grid is then used as options for the cli to send the prepared message (json file) to the event grid.
+### Download
+
+To get started, download the [latest](https://github.com/martijnvanschie/azure-utilities-eventgrid/releases/latest) release from the release page. Alternatively you can choose any of the pre-release versions available.
+
+Currently the following downloads are available
+
+| Artifact                                      | Description      	|
+|-----------------------------------------------|------------------	|
+| evgtpub-win-x64-{version}.zip                	| A windows X64 based version which required .NET Runtime to be installed 	|
+| evgtpub-win-x64-self-contained-{version}.zip 	| A windows X64 based version which is self contained and down not required .NET Runtime to be installed	|
+
+### Prerequisites
+
+Depending on the artifact you download you need to have [.NET 6.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime) installed on your machine.
+
+The event grid cli also expects the event grid to be deployed for it to work. It will not create one automatically. The information of the grid is then used as options for the cli to send the prepared message (json file) to the event grid.
 
 ## Usage
 
@@ -44,6 +62,10 @@ You can specify a different folder using the `--folder` option.
 The event id is a required field according to it's [schema](https://docs.microsoft.com/en-us/azure/event-grid/event-schema) and should therefor be set in the file. If the id is missing from the file the serialization will fail. To prevent duplicate id's you can tell the cli to override the id with a guid prior to sending it to the event grid. Use the `--override-eventid` option to enforce a new id.
 
 `evgtpub send file --topic evgt-demo --accesskey "sometoken" --override-eventid true`
+
+### Authentication
+
+The Event Grid utility uses a token to authenticate against the Event Grid topic. No additional credentials are required.
 
 ## Enjoy
 
