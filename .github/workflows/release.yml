@@ -148,8 +148,7 @@ jobs:
       - name: Zip Release
         uses: TheDoctor0/zip-release@0.6.1
         with:
-          directory: release/
-          path: ../publish/${{ matrix.publishFolder }}
+          path: publish/${{ matrix.publishFolder }}
           filename: evgtpub-${{ matrix.publishFolder }}-${{ needs.create_release_version.outputs.version-package }}.zip          
 
       - name: Upload a Build Artifact
@@ -157,7 +156,7 @@ jobs:
         uses: actions/upload-artifact@v3.0.0
         with:
           name: cli
-          path: release/
+          path: publish/*.zip
 
   release-cli:
     name: Release the cli
@@ -181,3 +180,4 @@ jobs:
         tag: v${{ needs.create_release_version.outputs.version-package }}
         allowUpdates: true
         token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: "true"
