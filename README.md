@@ -14,10 +14,14 @@ To get started, download the [latest](https://github.com/martijnvanschie/azure-u
 
 Currently the following downloads are available
 
-| Artifact                                      | Description      	|
-|-----------------------------------------------|------------------	|
-| evgtpub-win-x64-{version}.zip                	| A windows X64 based version which required .NET Runtime to be installed 	|
-| evgtpub-win-x64-self-contained-{version}.zip 	| A windows X64 based version which is self contained and down not required .NET Runtime to be installed	|
+| Artifact                                        | Description      	|
+|-------------------------------------------------|------------------	|
+| evgtpub-win-x64-{version}.zip                	  | A windows x64 based version which requires .NET Runtime to be installed 	|
+| evgtpub-win-x64-self-contained-{version}.zip 	  | A windows x64 based version which is self contained and does not require .NET Runtime to be installed	|
+| evgtpub-linux-x64-{version}.zip                	| A linux x64 based version which requires .NET Runtime to be installed 	|
+| evgtpub-linux-x64-self-contained-{version}.zip 	| A linux x64 based version which is self contained and does not require .NET Runtime to be installed	|
+
+> The linux package should run on most desktop distributions like CentOS, Debian, Fedora, Ubuntu, and derivatives.
 
 ### Prerequisites
 
