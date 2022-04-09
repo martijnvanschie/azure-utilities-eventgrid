@@ -6,7 +6,7 @@ on:
 jobs:
 
   create_release_version:
-    name: Extract tag and create release
+    name: Extract tag and create release identifier
     runs-on: ubuntu-latest
 
     outputs:
@@ -51,6 +51,15 @@ jobs:
     name: Build and publish artifacts
     needs: create_release_version
     runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - runtime: "win-x64"
+            selfContained: "--no-self-contained"
+            publishFolder: "win-x64"
+          - runtime: "win-x64"
+            selfContained: "--self-contained"
+            publishFolder: "win-x64-self-contained"
 
     env:
       SINGLE_FILE: "true"
@@ -133,7 +142,7 @@ jobs:
         run: |
           cd EventGrid.Publisher.ConsoleApp
           cat './EventGrid.Publisher.ConsoleApp.csproj'
-          dotnet publish --runtime win-x64 --configuration Release --no-self-contained --output ../../publish/
+          dotnet publish --runtime win-x64 --configuration Release ${{ matrix.selfContained }} --output ../../publish/${{ matrix.publishFolder }}
           cat './EventGrid.Publisher.ConsoleApp.csproj'
 
       - name: Upload a Build Artifact
