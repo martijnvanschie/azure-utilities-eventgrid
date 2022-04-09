@@ -6,7 +6,7 @@ on:
 jobs:
 
   create_release_version:
-    name: Extract tag and create release
+    name: Extract tag and create release identifier
     runs-on: ubuntu-latest
 
     outputs:
@@ -51,6 +51,15 @@ jobs:
     name: Build and publish artifacts
     needs: create_release_version
     runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - runtime: "win-x64"
+            selfContained: "--no-self-contained"
+            publishFolder: "win-x64"
+          - runtime: "win-x64"
+            selfContained: "--self-contained"
+            publishFolder: "win-x64-self-contained"
 
     env:
       SINGLE_FILE: "true"
@@ -133,15 +142,21 @@ jobs:
         run: |
           cd EventGrid.Publisher.ConsoleApp
           cat './EventGrid.Publisher.ConsoleApp.csproj'
-          dotnet publish --runtime win-x64 --configuration Release --no-self-contained --output ../../publish/
+          dotnet publish --runtime win-x64 --configuration Release ${{ matrix.selfContained }} --output ../../publish/${{ matrix.publishFolder }}
           cat './EventGrid.Publisher.ConsoleApp.csproj'
+
+      - name: Zip Release
+        uses: TheDoctor0/zip-release@0.6.1
+        with:
+          path: publish/${{ matrix.publishFolder }}
+          filename: evgtpub-${{ matrix.publishFolder }}-${{ needs.create_release_version.outputs.version-package }}.zip          
 
       - name: Upload a Build Artifact
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v3.0.0
         with:
           name: cli
-          path: publish/
+          path: "*.zip"
 
   release-cli:
     name: Release the cli
@@ -154,14 +169,9 @@ jobs:
       with:
         name: cli
 
-    - name: Zip Release
-      uses: TheDoctor0/zip-release@0.6.1
-      with:
-        filename: evgtpub-release-win-x64-${{ needs.create_release_version.outputs.version-package }}.zip
-
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "evgtpub-release-win-x64-${{ needs.create_release_version.outputs.version-package }}.zip"
+        artifacts: "*.zip"
         name: Release v${{ needs.create_release_version.outputs.version-package }}
         body: |
           # Release notes
@@ -170,3 +180,4 @@ jobs:
         tag: v${{ needs.create_release_version.outputs.version-package }}
         allowUpdates: true
         token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: "true"
