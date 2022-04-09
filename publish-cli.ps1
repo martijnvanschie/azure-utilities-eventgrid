@@ -22,6 +22,22 @@ dotnet publish `
     --configuration "Release" `
     --self-contained false    
 
+dotnet publish `
+    .\cli\EventGrid.Publisher.ConsoleApp\EventGrid.Publisher.ConsoleApp.csproj `
+    -p:PublishSingleFile=$singlefile `
+    --output $publishingfolder\linux-x64-contained `
+    --runtime linux-x64 `
+    --configuration "Release" `
+    --self-contained true    
+    
+    dotnet publish `
+    .\cli\EventGrid.Publisher.ConsoleApp\EventGrid.Publisher.ConsoleApp.csproj `
+    -p:PublishSingleFile=$singlefile `
+    --output $publishingfolder\linux-x64 `
+    --runtime linux-x64 `
+    --configuration "Release" `
+    --self-contained false     
+
 $publishingfolder = "c:\apps\Azure utils"
 
 dotnet publish `
@@ -30,4 +46,4 @@ dotnet publish `
     --output $publishingfolder `
     --runtime win-x64 `
     --configuration "Release" `
-    --self-contained false        
+    --self-contained false 

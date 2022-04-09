@@ -1,7 +1,6 @@
 # Azure Event Grid Utility
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/martijnvanschie/azure-utilities-eventgrid/Continues%20Integration?label=CI%20build)
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/martijnvanschie/azure-utilities-eventgrid?label=Latest%20Release&logo=github)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/martijnvanschie/azure-utilities-eventgrid?label=Latest%20Release&logo=github) ![GitHub Release Date](https://img.shields.io/github/release-date/martijnvanschie/azure-utilities-eventgrid?logo=github) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/martijnvanschie/azure-utilities-eventgrid/Continues%20Integration?label=CI%20build&logo=github)
 
 ## Purpose
 
@@ -11,7 +10,7 @@ This is a small cli tool that let's you send a event grid message to a topic usi
 
 ### Download
 
-To get started, download the [latest](https://github.com/martijnvanschie/azure-utilities-eventgrid/releases/latest) release from the release page. Alternatively you can choose any of the pre-release versions available.
+To get started, download the [latest](https://github.com/martijnvanschie/azure-utilities-eventgrid/releases/latest) release from the release page. Alternatively you can choose any of the pre-release versions available or just fork the code and build it yourself.
 
 Currently the following downloads are available
 

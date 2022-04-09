@@ -60,6 +60,12 @@ jobs:
           - runtime: "win-x64"
             selfContained: "--self-contained"
             publishFolder: "win-x64-self-contained"
+          - runtime: "linux-x64"
+            selfContained: "--no-self-contained"
+            publishFolder: "linux-x64"
+          - runtime: "linux-x64"
+            selfContained: "--self-contained"
+            publishFolder: "linux-x64-self-contained"            
 
     env:
       SINGLE_FILE: "true"
@@ -142,7 +148,7 @@ jobs:
         run: |
           cd EventGrid.Publisher.ConsoleApp
           cat './EventGrid.Publisher.ConsoleApp.csproj'
-          dotnet publish --runtime win-x64 --configuration Release ${{ matrix.selfContained }} --output ../../publish/${{ matrix.publishFolder }}
+          dotnet publish --runtime ${{ matrix.runtime }} --configuration Release ${{ matrix.selfContained }} --output ../../publish/${{ matrix.publishFolder }}
           cat './EventGrid.Publisher.ConsoleApp.csproj'
 
       - name: Zip Release
