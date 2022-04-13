@@ -69,6 +69,7 @@ jobs:
 
     env:
       SINGLE_FILE: "true"
+      PROJECT_FILE: "cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj"
 
     defaults:
       run:
@@ -88,44 +89,38 @@ jobs:
           dotnet nuget add source --username martijnvanschie --password ${{ secrets.NUGET_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/martijnvanschie/index.json"
           dotnet restore
 
-      - name: This is where we apply the versions to the csproj file
-        run: |
-          echo version-assembly = ${{ needs.create_release_version.outputs.version-assembly }} 
-          echo version-file = ${{ needs.create_release_version.outputs.version-file }}
-          echo version-informational = ${{ needs.create_release_version.outputs.version-informational }}
-          echo version-package = ${{ needs.create_release_version.outputs.version-package }}
-          echo buildnumber = ${{ needs.create_release_version.outputs.buildnumber }} 
-
       - name: xml-replace-action AssemblyVersion
         uses: rvolo/xml-replace-action@v0.3
         with:
-          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          filepath: '${{ env.PROJECT_FILE }}'
           xpath: '//Project/PropertyGroup/AssemblyVersion/text()'
           replace: '${{ needs.create_release_version.outputs.version-assembly }}' 
 
       - name: xml-replace-action FileVersion
         uses: rvolo/xml-replace-action@v0.3
         with:
-          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          filepath: '${{ env.PROJECT_FILE }}'
           xpath: '//Project/PropertyGroup/FileVersion/text()'
           replace: '${{ needs.create_release_version.outputs.version-file }}' 
 
       - name: xml-replace-action InformationalVersion
         uses: rvolo/xml-replace-action@v0.3
         with:
-          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          filepath: '${{ env.PROJECT_FILE }}'
           xpath: '//Project/PropertyGroup/InformationalVersion/text()'
           replace: '${{ needs.create_release_version.outputs.version-informational }}' 
 
       - name: xml-replace-action PackageVersion
         uses: rvolo/xml-replace-action@v0.3
         with:
-          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          filepath: '${{ env.PROJECT_FILE }}'
           xpath: '//Project/PropertyGroup/PackageVersion/text()'
           replace: '${{ needs.create_release_version.outputs.version-package }}'  
 
       - name: Print project file
-        run: cat './EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+        run: |
+          cd ..
+          cat '${{ env.PROJECT_FILE }}'
 
       - name: Build
         run: |
@@ -139,7 +134,7 @@ jobs:
       - name: Set PublishSingleFile to true
         uses: rvolo/xml-replace-action@v0.3
         with:
-          filepath: 'cli/EventGrid.Publisher.ConsoleApp/EventGrid.Publisher.ConsoleApp.csproj'
+          filepath: '${{ env.PROJECT_FILE }}'
           xpath: '//Project/PropertyGroup/PublishSingleFile/text()'
           replace: 'true'       
 
@@ -147,9 +142,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           cd EventGrid.Publisher.ConsoleApp
-          cat './EventGrid.Publisher.ConsoleApp.csproj'
           dotnet publish --runtime ${{ matrix.runtime }} --configuration Release ${{ matrix.selfContained }} --output ../../publish/${{ matrix.publishFolder }}
-          cat './EventGrid.Publisher.ConsoleApp.csproj'
 
       - name: Zip Release
         uses: TheDoctor0/zip-release@0.6.1
